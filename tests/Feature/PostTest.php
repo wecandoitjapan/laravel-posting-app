@@ -105,4 +105,89 @@ class PostTest extends TestCase
         $this->assertDatabaseHas('posts', $post);
         $response->assertRedirect(route('posts.index'));
     }
+    // 未ログインのユーザーは投稿編集ページにアクセスできない
+    public function test_guest_cannot_access_posts_edit()
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->get(route('posts.edit', $post));
+
+        $response->assertRedirect(route('login'));
+    }
+
+    // ログイン済みのユーザーは他人の投稿編集ページにアクセスできない
+    public function test_user_cannot_access_others_posts_edit()
+    {
+        $user = User::factory()->create();
+        $other_user = User::factory()->create();
+        // 他人の投稿編集ページを用意するため$other_userと変数を定義している
+        $others_post = Post::factory()->create(['user_id' => $other_user->id]);
+
+        $response = $this->actingAs($user)->get(route('posts.edit', $others_post));
+
+        $response->assertRedirect(route('posts.index'));
+    }
+
+    // ログイン済みのユーザーは自身の投稿編集ページにアクセスできる
+    public function test_user_can_access_own_posts_edit()
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->get(route('posts.edit', $post));
+
+        $response->assertStatus(200);
+    }
+    // 未ログインのユーザーは投稿を更新できない
+    public function test_guest_cannot_update_post()
+    {
+        $user = User::factory()->create();
+        $old_post = Post::factory()->create(['user_id' => $user->id]);
+
+        $new_post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始！頑張るぞ！'
+        ];
+
+        $response = $this->patch(route('posts.update', $old_post), $new_post);
+
+        $this->assertDatabaseMissing('posts', $new_post);
+        $response->assertRedirect(route('login'));
+    }
+
+    // ログイン済みのユーザーは他人の投稿を更新できない
+    public function test_user_cannot_update_others_post()
+    {
+        $user = User::factory()->create();
+        $other_user = User::factory()->create();
+        $others_old_post = Post::factory()->create(['user_id' => $other_user->id]);
+
+        $new_post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始！頑張るぞ！'
+        ];
+
+        $response = $this->actingAs($user)->patch(route('posts.update', $others_old_post), $new_post);
+
+        $this->assertDatabaseMissing('posts', $new_post);
+        $response->assertRedirect(route('posts.index'));
+    }
+
+    // ログイン済みのユーザーは自身の投稿を更新できる
+    public function test_user_can_update_own_post()
+    {
+        $user = User::factory()->create();
+        $old_post = Post::factory()->create(['user_id' => $user->id]);
+
+        $new_post = [
+            'title' => 'プログラミング学習1日目',
+            'content' => '今日からプログラミング学習開始！頑張るぞ！'
+        ];
+
+        $response = $this->actingAs($user)->patch(route('posts.update', $old_post), $new_post);
+
+        $this->assertDatabaseHas('posts', $new_post);
+        $response->assertRedirect(route('posts.show', $old_post));
+    }
 }

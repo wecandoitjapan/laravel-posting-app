@@ -40,5 +40,29 @@ class PostController extends Controller
 
       return redirect()->route('posts.index')->with('flash_message', '投稿が完了しました。');
   }
-  
+  // 編集ページ
+  public function edit(Post $post)
+  {
+      if ($post->user_id !== Auth::id()) {
+        // 投稿が属するユーザーのID（idカラムの値）と現在ログイン中のユーザーのIDを比較し、異なる場合は投稿一覧ページにリダイレクト
+        // 他人の投稿を編集できないようにするため
+          return redirect()->route('posts.index')->with('error_message', '不正なアクセスです。');
+      }
+
+      return view('posts.edit', compact('post'));
+  }
+  // 更新機能
+  // 「どのデータを更新するか」という情報も必要なためPostモデルの型宣言
+  public function update(PostRequest $request, Post $post)
+  {
+      if ($post->user_id !== Auth::id()) {
+          return redirect()->route('posts.index')->with('error_message', '不正なアクセスです。');
+      }
+
+      $post->title = $request->input('title');
+      $post->content = $request->input('content');
+      $post->save();
+
+      return redirect()->route('posts.show', $post)->with('flash_message', '投稿を編集しました。');
+  }
 }

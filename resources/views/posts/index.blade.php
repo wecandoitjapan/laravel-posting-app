@@ -30,6 +30,11 @@
        @if (session('flash_message'))
             <p>{{ session('flash_message') }}</p>
         @endif
+    <!-- 編集ページでのエラーメッセージの表示エリア -->
+        @if (session('error_message'))
+            <p>{{ session('error_message') }}</p>
+        @endif
+
         <!-- 新規投稿ページへのリンク -->
         <a href="{{ route('posts.create') }}">新規投稿</a>
        @if($posts->isNotEmpty())
@@ -39,6 +44,8 @@
                    <p>{{ $post->content }}</p>
                    <!-- 第2引数にモデルのインスタンスを渡している -->
                    <a href="{{ route('posts.show', $post) }}">詳細</a>
+                   <!-- 投稿編集ページへのリンク -->
+                   <a href="{{ route('posts.edit', $post) }}">編集</a>
                </article>
            @endforeach
        @else

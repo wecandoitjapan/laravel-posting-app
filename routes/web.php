@@ -43,3 +43,9 @@ Route::post('/posts', [PostController::class, 'store'])->middleware(['auth', 've
 
 // showアクション
 Route::get('/posts/{post}', [PostController::class, 'show'])->middleware(['auth', 'verified'])->name('posts.show');
+
+// 投稿編集ページ　editアクション
+Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->middleware(['auth', 'verified'])->name('posts.edit');
+
+// 投稿更新ページ　updateアクション
+Route::patch('/posts/{post}', [PostController::class, 'update'])->middleware(['auth', 'verified'])->name('posts.update');
