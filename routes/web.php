@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+/*
 // インデックスアクション
 Route::get('/posts', [PostController::class, 'index'])->middleware(['auth', 'verified'])->name('posts.index');
 
@@ -49,3 +50,10 @@ Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->middleware(['
 
 // 投稿更新ページ　updateアクション
 Route::patch('/posts/{post}', [PostController::class, 'update'])->middleware(['auth', 'verified'])->name('posts.update');
+
+// 削除
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])->middleware(['auth', 'verified'])->name('posts.destroy');
+
+*/
+
+Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);

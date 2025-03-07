@@ -39,6 +39,12 @@
            <!-- 投稿編集ページへのリンク -->
            @if ($post->user_id === Auth::id())
                 <a href="{{ route('posts.edit', $post) }}">編集</a>
+                <!-- 削除ボタン -->
+                <form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="return confirm('本当に削除してもよろしいですか？');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">削除</button>
+                </form>
             @endif
        </article>
    </main>
