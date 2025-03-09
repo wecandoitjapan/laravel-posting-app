@@ -21,9 +21,10 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
+        // 課題　バリデーション追加
         return [
-            'title' => 'required',
-            'content' => 'required'
+            'title' => 'required|max:40',
+            'content' => 'required|max:200'
         ];
     }
 }

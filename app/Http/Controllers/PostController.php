@@ -34,12 +34,6 @@ class PostController extends Controller
   // 作成機能
   public function store(PostRequest $request)
   {
-    //改題　バリデーション設定 
-    $request->validate([
-        'title' => 'max:40',
-        'content' => 'max:200'
-    ]);
-
       $post = new Post();
       $post->title = $request->input('title');
       $post->content = $request->input('content');
